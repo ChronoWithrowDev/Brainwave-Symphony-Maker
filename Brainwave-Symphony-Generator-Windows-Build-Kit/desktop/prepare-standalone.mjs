@@ -1,4 +1,4 @@
-import { access, cp, mkdir } from "node:fs/promises";
+import { access, cp, copyFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
@@ -24,5 +24,7 @@ try {
 } catch {
   // The project can run without a public directory.
 }
+await copyFile(process.execPath, path.join(standalone, "node.exe"));
 
+console.log("Bundled Node.js runtime for the standalone server.");
 console.log("Prepared standalone Next.js files for Electron packaging.");
