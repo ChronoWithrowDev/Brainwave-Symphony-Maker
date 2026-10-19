@@ -16,25 +16,63 @@ jobs:
 
     steps:
       - name: Check out project
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      - name: Find Brainwave project folder
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Filter package.json -Recurse -File |
+            Where-Object {
+              $_.FullName -notmatch '[\\/](node_modules|\.git)[\\/]'
+            }
+
+          $game = $null
+
+          foreach ($file in $files) {
+            try {
+              $pkg = Get-Content $file.FullName -Raw | ConvertFrom-Json
+
+              if ($pkg.scripts -and $pkg.scripts.'dist:win') {
+                $game = $file.DirectoryName
+                break
+              }
+            } catch {}
+          }
+
+          if (-not $game) {
+            throw "Could not find package.json with the dist:win script. Check that the complete build kit was uploaded."
+          }
+
+          "GAME_DIR=$game" |
+            Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+          Write-Host "Found Brainwave project at: $game"
+
       - name: Install dependencies
-        run: npm install
+        shell: pwsh
+        run: |
+          Set-Location $env:GAME_DIR
+          npm install
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build Windows installer and portable app
-        run: npm run dist:win
+        shell: pwsh
+        run: |
+          Set-Location $env:GAME_DIR
+          npm run dist:win
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: Upload Windows installers
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: Brainwave-Symphony-Generator-Windows-Installers
-          path: release/*.exe
+          path: '**/release/*.exe'
           if-no-files-found: error
           retention-days: 30
