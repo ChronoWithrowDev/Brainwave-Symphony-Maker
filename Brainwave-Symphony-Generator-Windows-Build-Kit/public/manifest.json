@@ -1,0 +1,16 @@
+{
+  "name": "Mind Control Clearing",
+  "short_name": "MindControl",
+  "description": "Precision multi-stage binaural beat synthesizer and psychoacoustic frequency choreographer by Ptolemy & [Undesignated].",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#110E0C",
+  "theme_color": "#F59E0B",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

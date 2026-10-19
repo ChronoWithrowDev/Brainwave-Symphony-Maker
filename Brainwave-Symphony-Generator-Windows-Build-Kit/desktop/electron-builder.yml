@@ -1,0 +1,27 @@
+appId: org.brainwavesymphony.generator
+productName: Brainwave Symphony Generator
+directories:
+  output: release
+files:
+  - desktop/main.cjs
+  - package.json
+  - '!node_modules/**'
+extraResources:
+  - from: .next/standalone
+    to: app-server
+    filter:
+      - '**/*'
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Brainwave Symphony Generator
