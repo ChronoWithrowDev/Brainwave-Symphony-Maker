@@ -71,13 +71,18 @@ function dataFile(): string {
 
 function createInitialState(): LocalStoreState {
   const now = new Date().toISOString();
-  const symphonies: LocalSymphony[] = DEFAULT_SYMPHONIES.map((record, index) => ({
-    ...record,
-    id: index + 1,
-    createdAt: now,
-    stages: record.stages as SymphonyStage[],
-    ambientTexture: record.ambientTexture as AmbientTexture,
-  }));
+const symphonies: LocalSymphony[] = DEFAULT_SYMPHONIES.map((record, index) => ({
+  ...record,
+  id: index + 1,
+  stewardName: record.stewardName ?? record.author ?? "Shared Clearing",
+  isPreset: record.isPreset ?? true,
+  ambientLevel: record.ambientLevel ?? 0,
+  isFavorite: record.isFavorite ?? false,
+  playCount: record.playCount ?? 0,
+  createdAt: now,
+  stages: record.stages as SymphonyStage[],
+  ambientTexture: record.ambientTexture as AmbientTexture,
+}));
   return {
     version: 1,
     stewards: [{
